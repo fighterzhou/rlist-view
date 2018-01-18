@@ -25,13 +25,14 @@ export class RListView extends Component {
     function disableRefreshBefore() {
       return !this.props.disableRefresh;
     }
+
     this.onTouchStart = before(disableRefreshBefore, this.onTouchStart).bind(this);
 
     this.onTouchMove = before(disableRefreshBefore, this.onTouchMove).bind(this);
 
     this.onTouchEnd = before(disableRefreshBefore, this.onTouchEnd).bind(this);
 
-    this.onScroll = before(function() {
+    this.onScroll = before(function () {
       return !this.props.disableInfiniteScroll;
     }, this.onScroll).bind(this);
 
@@ -43,6 +44,7 @@ export class RListView extends Component {
     this.isRefreshing = true;
     this.isPulling = false;
   }
+
   componentDidMount() {
     this.rootDom.addEventListener('touchmove', this.onTouchMove, false);
 
@@ -59,13 +61,15 @@ export class RListView extends Component {
       this.listendScroll(this.rootDom);
     }
   }
+
   onTouchStart(e) {
     this.startYPos = this.prevYPos = e.touches[0].pageY;
   }
+
   onTouchMove(e) {
     // do noting when is refreshing
     if (this.isRefreshing) return;
-    
+
     const curYpos = e.touches[0].pageY;
     const scrollTop = this.rootDom.scrollTop
 
@@ -81,6 +85,7 @@ export class RListView extends Component {
     }
     this.prevYPos = curYpos
   }
+
   onTouchEnd() {
     if (this.isRefreshing) return;
     if (this.shouldRefresh) {
@@ -90,6 +95,7 @@ export class RListView extends Component {
     }
     this.isPulling = false;
   }
+
   onScroll() {
     const state = this.state;
     const props = this.props;
@@ -104,6 +110,7 @@ export class RListView extends Component {
         }));
     }
   }
+
   arriveBottom() {
     const props = this.props;
     const target = this.scrollTarget;
@@ -112,18 +119,22 @@ export class RListView extends Component {
     const scrollHeight = props.useWindowScroll ? document.documentElement.scrollHeight : target.scrollHeight;
     return (scrollHeight - (scrollTop + visibleHeight) <= props.threshold);
   }
+
   calcDistance(distance) {
     return distance / 3;
   }
+
   get shouldRefresh() {
     return this.state.translateY >= this.refreshDom.clientHeight;
   }
+
   get progress() {
     if (this.refreshDom) {
       return Math.min(this.state.translateY / this.refreshDom.clientHeight * 100, 100)
     }
     return 0;
   }
+
   refresh(transition = true) {
     const props = this.props;
     this.setState({
@@ -139,25 +150,29 @@ export class RListView extends Component {
         this.isRefreshing = false;
       });
   }
+
   resetPosition() {
     this.setState({
       translateY: 0,
       transition: true
     });
   }
+
   listendScroll(target) {
     this.scrollTarget = target;
     target.addEventListener('scroll', this.onScroll);
   }
+
   render() {
     const props = this.props;
     const state = this.state;
+    // className={classNames('rlist-view-component', {
+    //   // TODO: remove in future
+    //   // 'ios-local-scroll-fix': isIphone()
+    // })}
     return (
       <div
-        className={classNames('rlist-view-component', {
-          // TODO: remove in future
-          // 'ios-local-scroll-fix': isIphone()
-        })}
+        className="rlist-view-component"
         style={{
           height: props.height
         }}
